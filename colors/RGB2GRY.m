@@ -1,24 +1,32 @@
 function gray = RGB2GRY(I_rgb, index)
-    [H, W, ~] = size(I_rgb);
-    gray = zeros(H, W);
-    gray = double(gray);
-
-    for i = 1:H
-        for j = 1:W
-            if index == 1
-                gray(i,j) = (I_rgb(i,j,1) + I_rgb(i,j,2) + I_rgb(i,j,3)) / 3;
-            elseif index == 2
-                gray(i,j) = I_rgb(i,j,1);
-            elseif index == 3
-                gray(i,j) = I_rgb(i,j,2);
-            elseif index == 4
-                gray(i,j) = I_rgb(i,j,3);
-            elseif index == 5
-                gray(i,j) = I_rgb(i,j,1)*0.2 + I_rgb(i,j,2)*0.3 + I_rgb(i,j,3)*0.5;
-            end
-        end
-    end
-
-    gray = uint8(gray);
+    % Convert RGB to grayscale using vectorized operations
     
+    [H, W, ~] = size(I_rgb);
+    
+    % Extract channels
+    R = double(I_rgb(:,:,1));
+    G = double(I_rgb(:,:,2));
+    B = double(I_rgb(:,:,3));
+    
+    switch index
+        case 1
+            % Average
+            gray = (R + G + B) / 3;
+        case 2
+            % Red channel
+            gray = R;
+        case 3
+            % Green channel
+            gray = G;
+        case 4
+            % Blue channel
+            gray = B;
+        case 5
+            % Weighted average
+            gray = R*0.2 + G*0.3 + B*0.5;
+        otherwise
+            error('Invalid index for RGB2GRY');
+    end
+    
+    gray = uint8(gray);
 end

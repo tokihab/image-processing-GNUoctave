@@ -146,6 +146,10 @@ function guii()
             updateStatus('Error: No image loaded.');
             return;
         end
+        
+        updateStatus('Processing...');
+        drawnow;
+        
         methodList = get(methodDropdown, 'String');
         selectedMethod = methodList{get(methodDropdown, 'Value')};
 

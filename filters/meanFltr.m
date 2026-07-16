@@ -1,14 +1,18 @@
 function filtered = meanFltr(img)
+    % Apply 3x3 mean filter using convolution for speed
+    % This is much faster than nested loops
+    
     [H, W, L] = size(img);
     filtered = zeros(H, W, L, 'uint8');
-    padded = padarray(double(img), [1 1], 'replicate');
     
+    % Define 3x3 mean kernel
+    kernel = ones(3, 3) / 9;
+    
+    % Apply to each channel
     for c = 1:L
-        for i = 1:H
-            for j = 1:W
-                window = padded(i:i+2, j:j+2, c);
-                filtered(i,j,c) = mean(window(:));
-            end
-        end
+        % Use conv2 for fast convolution
+        filtered(:,:,c) = conv2(double(img(:,:,c)), kernel, 'same');
     end
+    
+    filtered = uint8(filtered);
 end

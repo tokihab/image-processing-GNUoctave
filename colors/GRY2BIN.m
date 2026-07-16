@@ -1,7 +1,7 @@
 function binary = GRY2BIN(I_gray, index)
-    [H, W] = size(I_gray);
-    binary = zeros(H, W);
-    I_gray = double(I_gray); % Convert to double for calculations
+    % Convert grayscale to binary using vectorized operations
+    
+    I_gray = double(I_gray);
     
     % Determine threshold based on index
     if index == 1
@@ -14,16 +14,6 @@ function binary = GRY2BIN(I_gray, index)
         error('Invalid index for Gray2Binary');
     end
     
-    % Apply threshold
-    for i = 1:H
-        for j = 1:W
-            if I_gray(i,j) > threshold
-                binary(i,j) = 255;
-            else
-                binary(i,j) = 0;
-            end
-        end
-    end
-    
-    binary = uint8(binary);
+    % Apply threshold using vectorized operations
+    binary = uint8(I_gray > threshold) * 255;
 end
