@@ -1,18 +1,33 @@
-function Nimg = sltNpepr(img,ps,pp)
+function Nimg = sltNpepr(img, ps, pp)
     
-    [H, W, L]=size(img);
-    saltNo=round(ps*W*H);
-    peprNo=round(pp*W*H);
+    [H, W, L] = size(img);
+    Nimg = img;  % Start with original image
     
-    for i=1:saltNo
-        
-        row=ceil(rand(1,1)*H);
-        col=ceil(rand(1,1)*W);
-        img(row,col)=255;
-        
+    % Add salt noise (white pixels)
+    saltNo = round(ps * W * H);
+    for i = 1:saltNo
+        row = ceil(rand(1,1) * H);
+        col = ceil(rand(1,1) * W);
+        % Apply to all channels if RGB
+        if L == 1
+            Nimg(row, col) = 255;
+        else
+            Nimg(row, col, :) = 255;
+        end
     end
     
-    Nimg=img;
-    Nimg=uint8(Nimg);
+    % Add pepper noise (black pixels)
+    peprNo = round(pp * W * H);
+    for i = 1:peprNo
+        row = ceil(rand(1,1) * H);
+        col = ceil(rand(1,1) * W);
+        % Apply to all channels if RGB
+        if L == 1
+            Nimg(row, col) = 0;
+        else
+            Nimg(row, col, :) = 0;
+        end
+    end
     
+    Nimg = uint8(Nimg);
 end

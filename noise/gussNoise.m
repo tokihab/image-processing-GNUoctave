@@ -1,30 +1,33 @@
 function Nimg = gussNoise(img, v, m)
+    % Add Gaussian noise to an image
+    % img: input image (grayscale or RGB)
+    % v: variance of the Gaussian distribution
+    % m: mean of the Gaussian distribution
 
-    img=double(img);
-    [H, W, ~] = size(img);
+    [H, W, L] = size(img);
+    Nimg = double(img);
     
-    for i=1:225
-        
-        ppxNo = round(((exp(-((i-m)^2/(2*v*v))))/(sqrt(2*3.14))));
-        
-        for x=1:ppxNo
-            
-            row=ceil(rand(1,1)*H);
-            col=ceil(rand(1,1)*W);
-            img(row,col)=img(row,col)+i;
-            
-        end
-        
+    % Generate Gaussian noise with specified mean and variance
+    noise = m + v * randn(H, W);
+    
+    % Add noise to image
+    Nimg = Nimg + noise;
+    
+    % Handle RGB images - add same noise to all channels
+    if L > 1
+        noise3d = repmat(noise, [1, 1, L]);
+        Nimg = double(img) + noise3d;
     end
     
-    for k=1:1
-        
-        mn=min(min(img(:,:,k)));
-        mx=max(max(img(:,:,k)));
-        Nimg(:,:,k)=((img(:,:,k)-mn)/(mx-mn)*255);
-        
+    % Clip and normalize to [0, 255]
+    mn = min(Nimg(:));
+    mx = max(Nimg(:));
+    if mx > mn
+        Nimg = (Nimg - mn) / (mx - mn) * 255;
+    else
+        % Handle flat image case
+        Nimg = zeros(size(Nimg));
     end
     
     Nimg = uint8(Nimg);
-    
 end
