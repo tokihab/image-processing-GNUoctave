@@ -151,12 +151,111 @@ function guii()
 
         try
             switch selectedMethod
+                case 'Lab 3: Rgb2Gray'
+                    % Convert RGB to grayscale using average method (index 1)
+                    processedImg = RGB2GRY(img, 1);
+                case 'Lab 3: Gray2Binary'
+                    threshold = str2double(get(param1Edit, 'String'));
+                    grayImg = RGB2GRY(img, 1);
+                    % Create binary image using threshold
+                    processedImg = uint8(zeros(size(grayImg)));
+                    processedImg(grayImg > threshold*255) = 255;
+                case 'Lab 3: RGB2Binary'
+                    % Convert RGB to binary using fixed threshold
+                    processedImg = RGB2BIN(img, 1);
                 case 'Lab 4: Brightness'
                     value = str2double(get(param1Edit, 'String'));
                     processedImg = adjustBrightness(img, value);
-                % --- ADD YOUR OTHER LAB CASES HERE JUST LIKE BEFORE ---
                 case 'Lab 4: Negative'
                     processedImg = negative(img);
+                case 'Lab 4: Histogram'
+                    % Display histogram of the image
+                    figure;
+                    if size(img, 3) == 3
+                        grayImg = RGB2GRY(img, 1);
+                        HIST(grayImg);
+                    else
+                        HIST(img);
+                    end
+                    title('Image Histogram');
+                    processedImg = img; % Don't modify image, just show histogram
+                case 'Lab 5: Contrast Stretching'
+                    if size(img, 3) == 3
+                        grayImg = RGB2GRY(img, 1);
+                        processedImg = contrastStretch(grayImg);
+                    else
+                        processedImg = contrastStretch(img);
+                    end
+                case 'Lab 5: LOG'
+                    if size(img, 3) == 3
+                        grayImg = RGB2GRY(img, 1);
+                        processedImg = logTrans(grayImg);
+                    else
+                        processedImg = logTrans(img);
+                    end
+                case 'Lab 5: Gamma Correction'
+                    % Use a default gamma value
+                    gamma = 1.5;
+                    if size(img, 3) == 3
+                        grayImg = RGB2GRY(img, 1);
+                        processedImg = imadjust(grayImg, [], [], gamma);
+                    else
+                        processedImg = imadjust(img, [], [], gamma);
+                    end
+                case 'Lab 5: Histogram Equalization'
+                    if size(img, 3) == 3
+                        grayImg = RGB2GRY(img, 1);
+                        processedImg = histEqualize(grayImg);
+                    else
+                        processedImg = histEqualize(img);
+                    end
+                case 'Lab 6: Mean Filter'
+                    if size(img, 3) == 3
+                        % Apply to each channel
+                        processedImg = img;
+                        for c = 1:3
+                            processedImg(:,:,c) = meanFltr(img(:,:,c));
+                        end
+                    else
+                        processedImg = meanFltr(img);
+                    end
+                case 'Lab 6: Weight Filter'
+                    if size(img, 3) == 3
+                        % Apply to each channel
+                        processedImg = img;
+                        for c = 1:3
+                            processedImg(:,:,c) = weightFltr(img(:,:,c));
+                        end
+                    else
+                        processedImg = weightFltr(img);
+                    end
+                case 'Lab 6: Median Filter'
+                    if size(img, 3) == 3
+                        % Apply to each channel
+                        processedImg = img;
+                        for c = 1:3
+                            processedImg(:,:,c) = medianFltr(img(:,:,c));
+                        end
+                    else
+                        processedImg = medianFltr(img);
+                    end
+                case 'Lab 7: Salt & Pepper Noise'
+                    density = str2double(get(param1Edit, 'String'));
+                    % sltNpepr takes ps (salt probability) and pp (pepper probability)
+                    % We'll use half density for each
+                    processedImg = sltNpepr(img, density/2, density/2);
+                case 'Lab 7: Gaussian Noise'
+                    % Use default variance and mean for gussNoise
+                    processedImg = gussNoise(img, 10, 128);
+                case 'Lab 8: Ideal Low Pass'
+                    processedImg = ILHpass(img, 30, 0);  % Low pass with D0=30
+                case 'Lab 8: Ideal High Pass'
+                    % ILHpass might handle both, but we need to check
+                    % For now, use the same function
+                    processedImg = ILHpass(img, 30, 1);  % High pass with D0=30
+                case 'Custom: Low-Light Enhancement'
+                    gamma = get(brightnessSlider, 'Value');
+                    processedImg = imadjust(img, [], [], gamma);
                 otherwise
                     updateStatus('Method not implemented yet or select a valid method.');
                     return;
