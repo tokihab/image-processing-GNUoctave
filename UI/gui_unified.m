@@ -130,7 +130,7 @@ function gui_unified()
 
     function filterSelected(~, ~)
         % Get selected filter
-        idx = get(gcbo, 'Value');
+        idx = get(filterDropdown, 'Value');
         if idx == 1
             paramPanel.Visible = 'off';
             currentFilter = '';
