@@ -128,9 +128,9 @@ function gui_unified()
         end
     end
 
-    function filterSelected(src, ~)
+    function filterSelected(~, ~)
         % Get selected filter
-        idx = src.Value;
+        idx = get(gcbo, 'Value');
         if idx == 1
             paramPanel.Visible = 'off';
             currentFilter = '';
