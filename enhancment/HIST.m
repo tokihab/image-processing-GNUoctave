@@ -11,3 +11,12 @@ function histarr = HIST(IMG)
     bar(histarr);
     
 end
+function histarr = HIST(IMG)
+    if ndims(IMG) == 3 && size(IMG, 3) == 3
+        IMG = RGB2GRY(IMG, 1);
+    end
+
+    gray = uint8(IMG);
+    histarr = accumarray(double(gray(:)) + 1, 1, [256, 1]);
+    bar(histarr);
+end

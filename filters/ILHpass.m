@@ -1,42 +1,20 @@
 function ideal = ILHpass(I, D0, index)
-    
     [H, W, L] = size(I);
-    
-    % Create ideal low-pass or high-pass filter
-    filter = zeros(H, W);
-    for j = 1:H
-        for k = 1:W
-            dis = sqrt((j - (H/2)).^2 + (k - (W/2)).^2);
-            if dis <= D0
-                filter(j,k) = 1;
-            end
-        end
-    end
-    
-    % Invert for high-pass if index == 1
-    if index == 1
+    [X, Y] = meshgrid(1:W, 1:H);
+    dis = sqrt((X - W / 2) .^ 2 + (Y - H / 2) .^ 2);
+    filter = double(dis <= D0);
+
+    if index ~= 0
         filter = 1 - filter;
     end
-    
-    % Process each channel separately for RGB images
+
+    ideal = zeros(H, W, L);
+    for c = 1:L
+        fi = fftshift(fft2(double(I(:, :, c))));
+        ideal(:, :, c) = mat2gray(real(ifft2(ifftshift(fi .* filter))));
+    end
+
     if L == 1
-        % Grayscale image
-        fi = fft2(double(I));
-        fi_shifted = fftshift(fi);
-        filtered_shifted = fi_shifted .* filter;
-        filtered = ifftshift(filtered_shifted);
-        NI = ifft2(filtered);
-        ideal = mat2gray(real(NI));
-    else
-        % RGB image - process each channel
-        ideal = zeros(H, W, L);
-        for c = 1:L
-            fi = fft2(double(I(:,:,c)));
-            fi_shifted = fftshift(fi);
-            filtered_shifted = fi_shifted .* filter;
-            filtered = ifftshift(filtered_shifted);
-            NI = ifft2(filtered);
-            ideal(:,:,c) = mat2gray(real(NI));
-        end
+        ideal = ideal(:, :, 1);
     end
 end

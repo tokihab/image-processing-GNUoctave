@@ -1,26 +1,20 @@
 function filtered = GF(I, D0, index)
     [H, W, L] = size(I);
-    filter = zeros(H, W, L);
-    
-    % Create Gaussian filter
-    for j = 1:H
-        for k = 1:W
-            D = sqrt((j - H/2)^2 + (k - W/2)^2); % Distance from center
-            gaussian = exp(-(D^2) / (2 * D0^2)); % Gaussian LPF formula
-            filter(j, k, :) = gaussian;
-        end
-    end
-    
-    % Invert filter for high-pass
+    [X, Y] = meshgrid(1:W, 1:H);
+    D = sqrt((X - W / 2) .^ 2 + (Y - H / 2) .^ 2);
+    filter = exp(-(D .^ 2) ./ (2 * D0 ^ 2));
+
     if index ~= 0
         filter = 1 - filter;
     end
-    
-    % Frequency domain processing
-    fi = fft2(I);
-    fi_shifted = fftshift(fi);
-    filtered_shifted = fi_shifted .* filter;
-    filtered = ifftshift(filtered_shifted);
-    filtered = ifft2(filtered);
-    filtered = mat2gray(real(filtered));
+
+    filtered = zeros(H, W, L);
+    for c = 1:L
+        fi = fftshift(fft2(double(I(:, :, c))));
+        filtered(:, :, c) = mat2gray(real(ifft2(ifftshift(fi .* filter))));
+    end
+
+    if L == 1
+        filtered = filtered(:, :, 1);
+    end
 end
